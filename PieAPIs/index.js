@@ -2,6 +2,9 @@
 let express = require('express')
 let app = express()
 let pieRepo = require('./repos/pieRepo');
+let errorHelper = require('./helpers/errorHelpers');
+let cors = require('cors');
+
 // Use the express Router object
 let router = express.Router();
 
@@ -162,6 +165,22 @@ router.patch('/:id', function (req, res, next){
 
 // Configure router so all routes are prefixed with /api/v1
 app.use('/api/', router);
+
+// Configure CORS
+app.use(cors());
+
+// Configure esception logger to console
+app.use(errorHelper.logErrorsToConsole);
+
+// Configure exception logger to file
+app.use(errorHelper.logerrorsToFile);
+
+// Configure cliernt error handler
+app.use(errorHelper.clientErrorHandler);
+
+// Configure catch-all exception middleware last
+app.use(errorHelper.errorHandler);
+
 
 // Create server to listen on port 5000
 var server = app.listen(5000, function(){
